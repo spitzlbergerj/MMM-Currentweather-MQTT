@@ -1,0 +1,17 @@
+.MMM-Currentweather-MQTT .weathericon,
+.MMM-Currentweather-MQTT .fa-home {
+  font-size: 75%;
+  line-height: 65px;
+  display: inline-block;
+  -ms-transform: translate(0, -3px); /* IE 9 */
+  -webkit-transform: translate(0, -3px); /* Safari */
+  transform: translate(0, -3px);
+}
+
+.MMM-Currentweather-MQTT .humidityIcon {
+  padding-right: 4px;
+}
+
+.MMM-Currentweather-MQTT .humidity-padding {
+  padding-bottom: 6px;
+}
