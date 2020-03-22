@@ -1,0 +1,15 @@
+{
+  "name": "MMM-CurrentWeather-MQTT",
+  "version": "0.0.1",
+  "description": "mix standard module currentweather with payload from subscribed MQTT message",
+  "author": "Josef Spitzlberger",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/spitzlbergerj/MMM-currentweather-MQTT.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "mqtt": "^2.18.0",
+    "mqtt-packet": "^6.2.1"
+  }
+}
