@@ -24,6 +24,8 @@ Go to `MagicMirror/modules` and write
 
 ## Configuration
 
+Attention - first version with rigid processing of my MQTT telegrams
+
 Here is an example configuration with description. Put it in the `MagicMirror/config/config.js` file:
 
 ```javascript
