@@ -80,6 +80,9 @@ Module.register("MMM-Currentweather-MQTT",{
 	indexWindDir: 4,
 	indexRaining: 5,
 
+	// store HTTRequestResponse
+	HTTPRequestResponse: "",
+
 	// create a variable for the first upcoming calendar event. Used if no location is specified.
 	firstEvent: false,
 
@@ -377,37 +380,47 @@ Module.register("MMM-Currentweather-MQTT",{
 	 * Requests new data from openweather.org.
 	 * Calls processWeather on succesfull response.
 	 */
-	updateWeather: function() {
+	updateWeather: function(isTelegram) {
 		if (this.config.appid === "") {
 			Log.error("CurrentWeather: APPID not set!");
 			return;
 		}
 
-		var url = this.config.apiBase + this.config.apiVersion + "/" + this.config.weatherEndpoint + this.getParams();
-		var self = this;
-		var retry = true;
+		// Falls Aufruf durch Eintreffen eines neuen MQTT Telegramms, dann kein neuer HTTPRequest, 
+		// da ansonsten der free Account von openweathermap überlastet und gesperrt wird
+		if (isTelegram) {
+			var self = this;
+			// Aufruf mit gespeicherten Werten
+			self.processWeather(JSON.parse(this.HTTPRequestResponse));
+		} else {
+			var url = this.config.apiBase + this.config.apiVersion + "/" + this.config.weatherEndpoint + this.getParams();
+			var self = this;
+			var retry = true;
 
-		var weatherRequest = new XMLHttpRequest();
-		weatherRequest.open("GET", url, true);
-		weatherRequest.onreadystatechange = function() {
-			if (this.readyState === 4) {
-				if (this.status === 200) {
-					self.processWeather(JSON.parse(this.response));
-				} else if (this.status === 401) {
-					self.updateDom(self.config.animationSpeed);
+			var weatherRequest = new XMLHttpRequest();
+			weatherRequest.open("GET", url, true);
+			weatherRequest.onreadystatechange = function() {
+				if (this.readyState === 4) {
+					if (this.status === 200) {
+						this.HTTPRequestResponse = this.response;
+						self.processWeather(JSON.parse(this.response));
+					} else if (this.status === 401) {
+						self.updateDom(self.config.animationSpeed);
 
-					Log.error(self.name + ": Incorrect APPID.");
-					retry = true;
-				} else {
-					Log.error(self.name + ": Could not load weather.");
+						Log.error(self.name + ": Incorrect APPID.");
+						retry = true;
+					} else {
+						self.loaded = true;
+						Log.error(self.name + ": Could not load weather.");
+					}
+
+					if (retry) {
+						self.scheduleUpdate((self.loaded) ? -1 : self.config.retryDelay);
+					}
 				}
-
-				if (retry) {
-					self.scheduleUpdate((self.loaded) ? -1 : self.config.retryDelay);
-				}
-			}
-		};
-		weatherRequest.send();
+			};
+			weatherRequest.send();
+		}
 	},
 
 	/* getParams(compliments)
@@ -603,7 +616,7 @@ Module.register("MMM-Currentweather-MQTT",{
 
 		var self = this;
 		setTimeout(function() {
-			self.updateWeather();
+			self.updateWeather(false);
 		}, nextLoad);
 	},
 
@@ -707,7 +720,7 @@ Module.register("MMM-Currentweather-MQTT",{
 						sub.time = payload.time;
 					}
 				}
-				this.updateWeather();
+				this.updateWeather(true);
 			} else {
 				console.log(this.name + ": MQTT_PAYLOAD - No payload");
 			}
