@@ -391,7 +391,8 @@ Module.register("MMM-Currentweather-MQTT",{
 		if (isTelegram) {
 			var self = this;
 			// Aufruf mit gespeicherten Werten
-			self.processWeather(JSON.parse(this.HTTPRequestResponse));
+			// self.log("UpdateWeather", isTelegram, self.HTTPRequestResponse);
+			self.processWeather(JSON.parse(self.HTTPRequestResponse));
 		} else {
 			var url = this.config.apiBase + this.config.apiVersion + "/" + this.config.weatherEndpoint + this.getParams();
 			var self = this;
@@ -402,7 +403,8 @@ Module.register("MMM-Currentweather-MQTT",{
 			weatherRequest.onreadystatechange = function() {
 				if (this.readyState === 4) {
 					if (this.status === 200) {
-						this.HTTPRequestResponse = this.response;
+						self.HTTPRequestResponse = this.response;
+						// self.log("UpdateWeather", isTelegram, this.response, self.HTTPRequestResponse)
 						self.processWeather(JSON.parse(this.response));
 					} else if (this.status === 401) {
 						self.updateDom(self.config.animationSpeed);
