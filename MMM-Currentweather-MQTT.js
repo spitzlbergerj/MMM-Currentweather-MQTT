@@ -33,6 +33,7 @@ Module.register("MMM-Currentweather-MQTT",{
 		showIndoorTemperature: false,
 		showIndoorHumidity: false,
 		showFeelsLike: true,
+		showRainfall: true,
 
 		initialLoadDelay: 0, // 0 seconds delay
 		retryDelay: 2500,
@@ -79,6 +80,7 @@ Module.register("MMM-Currentweather-MQTT",{
 	indexWindSpeed: 3,
 	indexWindDir: 4,
 	indexRaining: 5,
+	indexRainfall: 6,
 
 	// store HTTRequestResponse
 	HTTPRequestResponse: "",
@@ -172,6 +174,7 @@ Module.register("MMM-Currentweather-MQTT",{
 		this.indoorHumidity = null;
 		this.weatherType = null;
 		this.feelsLike = null;
+		this.rainfall = null;
 		this.loaded = false;
 		this.scheduleUpdate(this.config.initialLoadDelay);
 
@@ -188,24 +191,37 @@ Module.register("MMM-Currentweather-MQTT",{
 		var small = document.createElement("div");
 		small.className = "normal medium";
 
+		var spacer1 = document.createElement("sup");
+		spacer1.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;";
+
 		var windIcon = document.createElement("span");
 		windIcon.className = "wi wi-strong-wind dimmed";
 		small.appendChild(windIcon);
+		small.appendChild(spacer1);
+
+		var spacer2 = document.createElement("sup");
+		spacer2.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;";
 
 		var windSpeed = document.createElement("span");
 		windSpeed.innerHTML = " " + this.windSpeed;
 		small.appendChild(windSpeed);
+		small.appendChild(spacer2);
 
 		if (this.config.showWindDirection) {
 			var windDirection = document.createElement("sup");
 			if (this.config.showWindDirectionAsArrow) {
 				if(this.windDeg !== null) {
-					windDirection.innerHTML = " &nbsp;<i class=\"fa fa-long-arrow-down\" style=\"transform:rotate("+this.windDeg+"deg);\"></i>&nbsp;";
+					windDirection.innerHTML = "<i class=\"fa fa-long-arrow-down\" style=\"transform:rotate("+this.windDeg+"deg);\"></i>";
 				}
 			} else {
 				windDirection.innerHTML = " " + this.translate(this.windDirection);
 			}
+
+			var spacer3 = document.createElement("sup");
+			spacer3.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;";
+	
 			small.appendChild(windDirection);
+			small.appendChild(spacer3);
 		}
 		var spacer = document.createElement("span");
 		spacer.innerHTML = "&nbsp;";
@@ -215,16 +231,21 @@ Module.register("MMM-Currentweather-MQTT",{
 			var humidity = document.createElement("span");
 			humidity.innerHTML = this.humidity;
 
-			var spacer = document.createElement("sup");
-			spacer.innerHTML = "&nbsp;";
-
 			var humidityIcon = document.createElement("sup");
 			humidityIcon.className = "wi wi-humidity humidityIcon";
 			humidityIcon.innerHTML = "&nbsp;";
 
+			var spacer4 = document.createElement("sup");
+			spacer4.innerHTML = "&nbsp;";
+			var spacer5 = document.createElement("sup");
+			spacer5.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;";
+
+	
+	
 			small.appendChild(humidity);
-			small.appendChild(spacer);
+			small.appendChild(spacer4);
 			small.appendChild(humidityIcon);
+			small.appendChild(spacer5);
 		}
 
 		var sunriseSunsetIcon = document.createElement("span");
@@ -258,8 +279,34 @@ Module.register("MMM-Currentweather-MQTT",{
 			this.addExtraInfoWeather(wrapper);
 		}
 
+		var spacer1 = document.createElement("sup");
+		spacer1.innerHTML = "&nbsp;";
+
+		var spacer2 = document.createElement("sup");
+		spacer2.innerHTML = "&nbsp;&nbsp;";
+
+		var spacer3 = document.createElement("sup");
+		spacer3.innerHTML = "&nbsp;&nbsp;&nbsp;";
+
+		var spacer4 = document.createElement("sup");
+		spacer4.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;";
+
 		var large = document.createElement("div");
 		large.className = "large light";
+
+		if (this.config.showRainfall) {
+			var rainfallToday = document.createElement("span");
+			rainfallToday.className = "normal medium";
+			rainfallToday.innerHTML = this.rainfall + " l/m²";
+
+			var spacer = document.createElement("sup");
+			spacer.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;";
+
+			large.appendChild(rainfallToday);
+			large.appendChild(spacer);
+		}
+
+
 
 		var weatherIcon = document.createElement("span");
 		weatherIcon.className = "wi weathericon " + this.weatherType;
@@ -567,6 +614,12 @@ Module.register("MMM-Currentweather-MQTT",{
 			this.windDeg = data.wind.deg;
 		} else {
 			this.windDeg = sub[this.indexWindDir].value;
+		}
+
+		if (sub[this.indexRainfall].value == "" || this.isValueTooOld(sub[this.indexRainfall].maxAgeSeconds, sub[this.indexRainfall].time)) {
+			this.rainfall = "-";
+		} else {
+			this.rainfall = sub[this.indexRainfall].value;
 		}
 
 		this.weatherType = this.config.iconTable[data.weather[0].icon];
