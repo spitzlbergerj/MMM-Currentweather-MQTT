@@ -102,6 +102,14 @@ Here is an example configuration with description. Put it in the `MagicMirror/co
 							{ from: "false", to: "nein" }
 						]
 					},
+					{
+						topic: 'wetter/rain-today',
+						label: 'Regenmenge heute',
+						suffix: '',
+						decimals: 0,
+						sortOrder: 70,
+						maxAgeSeconds: 600,
+					},
 				]
 			}
         ],
