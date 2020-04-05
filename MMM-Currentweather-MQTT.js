@@ -616,7 +616,7 @@ Module.register("MMM-Currentweather-MQTT",{
 			this.windDeg = sub[this.indexWindDir].value;
 		}
 
-		if (sub[this.indexRainfall].value == "" || this.isValueTooOld(sub[this.indexRainfall].maxAgeSeconds, sub[this.indexRainfall].time)) {
+		if (sub[this.indexRainfall].value == "" ) {
 			this.rainfall = "-";
 		} else {
 			this.rainfall = sub[this.indexRainfall].value;
