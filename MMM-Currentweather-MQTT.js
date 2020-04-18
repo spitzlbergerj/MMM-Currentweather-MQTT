@@ -559,14 +559,14 @@ Module.register("MMM-Currentweather-MQTT",{
 		if (sub[this.indexHum].value == "" || this.isValueTooOld(sub[this.indexHum].maxAgeSeconds, sub[this.indexHum].time)) {
 			this.humidity = parseFloat(data.main.humidity);
 		} else {
-			this.sourceHum = "OW";
+			this.sourceHum = "MQTT";
 			this.humidity = sub[this.indexHum].value;
 		}
 
 		if (sub[this.indexTemp].value == "" || this.isValueTooOld(sub[this.indexTemp].maxAgeSeconds, sub[this.indexTemp].time)) {
 			this.temperature = this.roundValue(data.main.temp);
 		} else {
-			this.sourceTemp = "OW";
+			this.sourceTemp = "MQTT";
 			this.temperature = sub[this.indexTemp].value;
 		}
 
@@ -577,21 +577,21 @@ Module.register("MMM-Currentweather-MQTT",{
 			if (sub[this.indexWindSpeed].value == "" || this.isValueTooOld(sub[this.indexWindSpeed].maxAgeSeconds, sub[this.indexWindSpeed].time)) {
 				this.windSpeed = this.ms2Beaufort(this.roundValue(data.wind.speed));
 			} else {
-				this.sourceWindSpeed = "OW";
+				this.sourceWindSpeed = "MQTT";
 				this.windSpeed = this.ms2Beaufort(this.roundValue(sub[this.indexWindSpeed].value));
 			}
 		} else if (this.config.useKMPHwind) {
 			if (sub[this.indexWindSpeed].value == "" || this.isValueTooOld(sub[this.indexWindSpeed].maxAgeSeconds, sub[this.indexWindSpeed].time)) {
 				this.windSpeed = parseFloat((data.wind.speed * 60 * 60) / 1000).toFixed(0);
 			} else {
-				this.sourceWindSpeed = "OW";
+				this.sourceWindSpeed = "MQTT";
 				this.windSpeed = parseFloat(sub[this.indexWindSpeed].value).toFixed(0);
 			}
 		} else {
 			if (sub[this.indexWindSpeed].value == "" || this.isValueTooOld(sub[this.indexWindSpeed].maxAgeSeconds, sub[this.indexWindSpeed].time)) {
 				this.windSpeed = parseFloat(data.wind.speed).toFixed(0);
 			} else {
-				this.sourceWindSpeed = "OW";
+				this.sourceWindSpeed = "MQTT";
 				this.windSpeed = parseFloat((sub[this.indexWindSpeed].value * 1000) / (60*60)).toFixed(0);
 			}
 		}
@@ -654,28 +654,28 @@ Module.register("MMM-Currentweather-MQTT",{
 		if (sub[this.indexWindDir].value == "" || this.isValueTooOld(sub[this.indexWindDir].maxAgeSeconds, sub[this.indexWindDir].time)) {
 			this.windDirection = this.deg2Cardinal(data.wind.deg);
 		} else {
-			this.sourceWindDir = "OW";
+			this.sourceWindDir = "MQTT";
 			this.windDirection = this.deg2Cardinal(sub[this.indexWindDir].value);
 		}
 
 		if (sub[this.indexWindDir].value == "" || this.isValueTooOld(sub[this.indexWindDir].maxAgeSeconds, sub[this.indexWindDir].time)) {
 			this.windDeg = data.wind.deg;
 		} else {
-			this.sourceWindDir = "OW";
+			this.sourceWindDir = "MQTT";
 			this.windDeg = sub[this.indexWindDir].value;
 		}
 
 		if (sub[this.indexRainfall].value == "" ) {
 			this.rainfall = "-";
 		} else {
-			this.sourceRainfall = "OW";
+			this.sourceRainfall = "MQTT";
 			this.rainfall = sub[this.indexRainfall].value;
 		}
 
 		if (sub[this.indexRaining].value == "" ) {
 			this.raining = "false";
 		} else {
-			this.sourceRaining = "OW";
+			this.sourceRaining = "MQTT";
 			this.raining = sub[this.indexRaining].value;
 		}
 
