@@ -82,6 +82,16 @@ Module.register("MMM-Currentweather-MQTT",{
 	indexRaining: 5,
 	indexRainfall: 6,
 
+	// woher stammen die Werte OpenWeather oder MQTT
+	sourceHum: "OW",
+	sourceTemp: "OW",
+	sourceWindSpeed: "OW",
+	sourceWindDir: "OW",
+	sourceRaining: "OW",
+	sourceRainfall: "OW",
+
+
+
 	// store HTTRequestResponse
 	HTTPRequestResponse: "",
 
@@ -175,6 +185,7 @@ Module.register("MMM-Currentweather-MQTT",{
 		this.weatherType = null;
 		this.feelsLike = null;
 		this.rainfall = null;
+		this.raining = false;
 		this.loaded = false;
 		this.scheduleUpdate(this.config.initialLoadDelay);
 
@@ -196,6 +207,9 @@ Module.register("MMM-Currentweather-MQTT",{
 
 		var windIcon = document.createElement("span");
 		windIcon.className = "wi wi-strong-wind dimmed";
+		if (this.sourceWindDir === "OW") {
+			windIcon.className = windIcon.className + " yellow";
+		}
 		small.appendChild(windIcon);
 		small.appendChild(spacer1);
 
@@ -203,12 +217,19 @@ Module.register("MMM-Currentweather-MQTT",{
 		spacer2.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;";
 
 		var windSpeed = document.createElement("span");
+		if (this.sourceWindSpeed === "OW") {
+			windSpeed.className = windSpeed.className + " yellow";
+		}
 		windSpeed.innerHTML = " " + this.windSpeed;
 		small.appendChild(windSpeed);
 		small.appendChild(spacer2);
 
 		if (this.config.showWindDirection) {
 			var windDirection = document.createElement("sup");
+			if (this.sourceWindDir === "OW") {
+				windDirection.className = windDirection.className + " yellow";
+			}
+	
 			if (this.config.showWindDirectionAsArrow) {
 				if(this.windDeg !== null) {
 					windDirection.innerHTML = "<i class=\"fa fa-long-arrow-down\" style=\"transform:rotate("+this.windDeg+"deg);\"></i>";
@@ -229,10 +250,16 @@ Module.register("MMM-Currentweather-MQTT",{
 
 		if (this.config.showHumidity) {
 			var humidity = document.createElement("span");
+			if (this.sourceHum === "OW") {
+				humidity.className = humidity.className + " yellow";
+			}
 			humidity.innerHTML = this.humidity;
 
 			var humidityIcon = document.createElement("sup");
 			humidityIcon.className = "wi wi-humidity humidityIcon";
+			if (this.sourceHum === "OW") {
+				humidityIcon.className = humidityIcon.className + " yellow";
+			}
 			humidityIcon.innerHTML = "&nbsp;";
 
 			var spacer4 = document.createElement("sup");
@@ -297,6 +324,12 @@ Module.register("MMM-Currentweather-MQTT",{
 		if (this.config.showRainfall) {
 			var rainfallToday = document.createElement("span");
 			rainfallToday.className = "normal medium";
+			if (this.sourceRainfall === "OW") {
+				rainfallToday.className = rainfallToday.className + " yellow";
+			}
+			if (this.raining === "true") {
+				rainfallToday.className = rainfallToday.className + " blue";
+			}
 			rainfallToday.innerHTML = this.rainfall + " l/m²";
 
 			var spacer = document.createElement("sup");
@@ -336,6 +369,10 @@ Module.register("MMM-Currentweather-MQTT",{
 
 		var temperature = document.createElement("span");
 		temperature.className = "bright";
+		if (this.sourceTemp === "OW") {
+			temperature.className = temperature.className + " yellow";
+		}
+
 		temperature.innerHTML = " " + this.temperature.replace(".", this.config.decimalSymbol) + degreeLabel;
 		large.appendChild(temperature);
 
@@ -513,16 +550,23 @@ Module.register("MMM-Currentweather-MQTT",{
 		}
 
 		sub = this.subscriptions;
+		this.sourceHum = "OW";
+		this.sourceTemp = "OW";
+		this.sourceWindSpeed = "OW";
+		this.sourceWindDir = "OW";
+		this.sourceRainfall = "OW";
 
 		if (sub[this.indexHum].value == "" || this.isValueTooOld(sub[this.indexHum].maxAgeSeconds, sub[this.indexHum].time)) {
 			this.humidity = parseFloat(data.main.humidity);
 		} else {
+			this.sourceHum = "OW";
 			this.humidity = sub[this.indexHum].value;
 		}
 
 		if (sub[this.indexTemp].value == "" || this.isValueTooOld(sub[this.indexTemp].maxAgeSeconds, sub[this.indexTemp].time)) {
 			this.temperature = this.roundValue(data.main.temp);
 		} else {
+			this.sourceTemp = "OW";
 			this.temperature = sub[this.indexTemp].value;
 		}
 
@@ -533,18 +577,21 @@ Module.register("MMM-Currentweather-MQTT",{
 			if (sub[this.indexWindSpeed].value == "" || this.isValueTooOld(sub[this.indexWindSpeed].maxAgeSeconds, sub[this.indexWindSpeed].time)) {
 				this.windSpeed = this.ms2Beaufort(this.roundValue(data.wind.speed));
 			} else {
+				this.sourceWindSpeed = "OW";
 				this.windSpeed = this.ms2Beaufort(this.roundValue(sub[this.indexWindSpeed].value));
 			}
 		} else if (this.config.useKMPHwind) {
 			if (sub[this.indexWindSpeed].value == "" || this.isValueTooOld(sub[this.indexWindSpeed].maxAgeSeconds, sub[this.indexWindSpeed].time)) {
 				this.windSpeed = parseFloat((data.wind.speed * 60 * 60) / 1000).toFixed(0);
 			} else {
+				this.sourceWindSpeed = "OW";
 				this.windSpeed = parseFloat(sub[this.indexWindSpeed].value).toFixed(0);
 			}
 		} else {
 			if (sub[this.indexWindSpeed].value == "" || this.isValueTooOld(sub[this.indexWindSpeed].maxAgeSeconds, sub[this.indexWindSpeed].time)) {
 				this.windSpeed = parseFloat(data.wind.speed).toFixed(0);
 			} else {
+				this.sourceWindSpeed = "OW";
 				this.windSpeed = parseFloat((sub[this.indexWindSpeed].value * 1000) / (60*60)).toFixed(0);
 			}
 		}
@@ -607,19 +654,29 @@ Module.register("MMM-Currentweather-MQTT",{
 		if (sub[this.indexWindDir].value == "" || this.isValueTooOld(sub[this.indexWindDir].maxAgeSeconds, sub[this.indexWindDir].time)) {
 			this.windDirection = this.deg2Cardinal(data.wind.deg);
 		} else {
+			this.sourceWindDir = "OW";
 			this.windDirection = this.deg2Cardinal(sub[this.indexWindDir].value);
 		}
 
 		if (sub[this.indexWindDir].value == "" || this.isValueTooOld(sub[this.indexWindDir].maxAgeSeconds, sub[this.indexWindDir].time)) {
 			this.windDeg = data.wind.deg;
 		} else {
+			this.sourceWindDir = "OW";
 			this.windDeg = sub[this.indexWindDir].value;
 		}
 
 		if (sub[this.indexRainfall].value == "" ) {
 			this.rainfall = "-";
 		} else {
+			this.sourceRainfall = "OW";
 			this.rainfall = sub[this.indexRainfall].value;
+		}
+
+		if (sub[this.indexRaining].value == "" ) {
+			this.raining = "false";
+		} else {
+			this.sourceRaining = "OW";
+			this.raining = sub[this.indexRaining].value;
 		}
 
 		this.weatherType = this.config.iconTable[data.weather[0].icon];
@@ -753,6 +810,7 @@ Module.register("MMM-Currentweather-MQTT",{
 	socketNotificationReceived: function(notification, payload) {
 		if (notification === "MQTT_PAYLOAD") {
 			if (payload != null) {
+				console.log(this.name, payload);
 				for (i = 0; i < this.subscriptions.length; i++) {
 					sub = this.subscriptions[i];
 					if (
