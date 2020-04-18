@@ -15,3 +15,18 @@
 .MMM-Currentweather-MQTT .humidity-padding {
   padding-bottom: 6px;
 }
+.MMM-Currentweather-MQTT .red {
+  color: red;
+}
+.MMM-Currentweather-MQTT .green {
+  color: green;
+}
+.MMM-Currentweather-MQTT .blue {
+  color: blue;
+}
+.MMM-Currentweather-MQTT .yellow {
+  color: yellow;
+}
+.MMM-Currentweather-MQTT .white {
+  color: white;
+}
