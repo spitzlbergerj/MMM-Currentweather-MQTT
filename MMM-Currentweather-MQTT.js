@@ -32,8 +32,8 @@ Module.register("MMM-Currentweather-MQTT",{
 		degreeLabel: false,
 		showIndoorTemperature: false,
 		showIndoorHumidity: false,
-		showFeelsLike: true,
-		showRainfall: true,
+		showFeelsLike: false,
+		showRainfall: false,
 
 		initialLoadDelay: 0, // 0 seconds delay
 		retryDelay: 2500,
@@ -444,7 +444,7 @@ Module.register("MMM-Currentweather-MQTT",{
 					var event = payload[e];
 					if (event.location || event.geo) {
 						this.firstEvent = event;
-						//Log.log("First upcoming event with location: ", event);
+						//this.log("First upcoming event with location: ", event);
 						break;
 					}
 				}
@@ -475,8 +475,10 @@ Module.register("MMM-Currentweather-MQTT",{
 		if (isTelegram) {
 			var self = this;
 			// Aufruf mit gespeicherten Werten
-			// self.log("UpdateWeather", isTelegram, self.HTTPRequestResponse);
-			self.processWeather(JSON.parse(self.HTTPRequestResponse));
+			self.log("UpdateWeather", isTelegram, self.HTTPRequestResponse);
+			if (self.HTTPRequestResponse != "") {
+				self.processWeather(JSON.parse(self.HTTPRequestResponse));
+			}
 		} else {
 			var url = this.config.apiBase + this.config.apiVersion + "/" + this.config.weatherEndpoint + this.getParams();
 			var self = this;
@@ -488,7 +490,7 @@ Module.register("MMM-Currentweather-MQTT",{
 				if (this.readyState === 4) {
 					if (this.status === 200) {
 						self.HTTPRequestResponse = this.response;
-						// self.log("UpdateWeather", isTelegram, this.response, self.HTTPRequestResponse)
+						self.log("UpdateWeather", isTelegram, this.response, self.HTTPRequestResponse)
 						self.processWeather(JSON.parse(this.response));
 					} else if (this.status === 401) {
 						self.updateDom(self.config.animationSpeed);
@@ -810,7 +812,7 @@ Module.register("MMM-Currentweather-MQTT",{
 	socketNotificationReceived: function(notification, payload) {
 		if (notification === "MQTT_PAYLOAD") {
 			if (payload != null) {
-				console.log(this.name, payload);
+				this.log(this.name, payload);
 				for (i = 0; i < this.subscriptions.length; i++) {
 					sub = this.subscriptions[i];
 					if (
@@ -835,7 +837,7 @@ Module.register("MMM-Currentweather-MQTT",{
 				}
 				this.updateWeather(true);
 			} else {
-				console.log(this.name + ": MQTT_PAYLOAD - No payload");
+				this.log(this.name + ": MQTT_PAYLOAD - No payload");
 			}
 		}
 	},
@@ -853,9 +855,9 @@ Module.register("MMM-Currentweather-MQTT",{
 	},
 	
 	getColors: function(sub) {
-		console.log(sub.topic);
-		console.log("Colors:", sub.colors);
-		console.log("Value: ", sub.value);
+		this.log(sub.topic);
+		this.log("Colors:", sub.colors);
+		this.log("Value: ", sub.value);
 		if (!sub.colors || sub.colors.length == 0) {
 			return {};
 		}
