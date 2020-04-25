@@ -35,10 +35,9 @@ Here is an example configuration with description. Put it in the `MagicMirror/co
 	module: "MMM-Currentweather-MQTT",
 	position: "top_right",
 	config: {
-		location: "Oberschleißheim",
-		// locationID: "2859147",
-		locationID: "6556320",
-		appid: "1d67c19abe9ac6b11132eeb7a97a72f7",
+		location: "XYZ",
+		locationID: "1234567",
+		appid: "<yourAppID>",
 		roundTemp: true,
 		degreeLabel: true,
 		showWindDirection: true,
@@ -47,58 +46,54 @@ Here is an example configuration with description. Put it in the `MagicMirror/co
 		showFeelsLike: false,
 		useBeaufort: false,
 		useKMPHwind: true,
-        logging: true,
-        useWildcards: false,
-        mqttServers: [
-            {
-                address: '192.168.178.101',  // Server address or IP address
-		 		        port: '1883',          // Port number if other than default
-				subscriptions: [
+		logging: true,
+		useWildcards: false,
+		mqttServers: [
+			{
+				address: 'xxx.xxx.xxx.xxx',  // Server address or IP address
+				port: '1883',                // Port number if other than default
+				subscriptions: [             // for now, all seven values must be 
+				                             // specified in the config, 
+							     // even if they are not delivered and not displayed.
 					{
-						topic: 'wetter/act-temp',  // Topic to look for
-						label: 'Temperatur',       // Displayed in front of value
-						suffix: '°C',              // Displayed after the value
-						decimals: 0,               // Round numbers to this number of decimals
-						sortOrder: 10,             // Can be used to sort entries in the same table
-						maxAgeSeconds: 600,        // Reduce intensity if value is older
+						topic: 'wetter/act-temp', // Topic to look for
+						suffix: '°C',             // Displayed after the value
+						decimals: 0,              // Round numbers to this number of decimals
+						sortOrder: 10,            // sortOrder 10 has to contain the temperature 
+						maxAgeSeconds: 18000,     // take Openweather value if older than 5 hours
 					},
 					{
 						topic: 'wetter/act-hum',
-						label: 'Luftfeuchtigkeit',
 						suffix: '%',
 						decimals: 0,
-						sortOrder: 20,
-						maxAgeSeconds: 600
+						sortOrder: 20,            // sortOrder 210 has to contain the humidity
+						maxAgeSeconds: 18000,
 					},
 					{
 						topic: 'wetter/act-illum',
-						label: 'Helligkeit',
-						sortOrder: 30,
-						maxAgeSeconds: 600
+						sortOrder: 30,            // sortOrder 30 has to contain the illumination
+						maxAgeSeconds: 18000,
 					},
 					{
 						topic: 'wetter/act-wind-speed',
-						label: 'Windgeschwindigkeit',
 						suffix: 'km/h',
 						decimals: 0,
-						sortOrder: 40,
-						maxAgeSeconds: 600
+						sortOrder: 40,            // sortOrder 40 has to contain the wind speed
+						maxAgeSeconds: 18000,
 					},
 					{
 						topic: 'wetter/act-wind-dir',
-						label: 'Windrichtung',
 						suffix: '°',
 						decimals: 0,
-						sortOrder: 50,
-						maxAgeSeconds: 600
+						sortOrder: 50,            // sortOrder 50 has to contain the wind direction
+						maxAgeSeconds: 18000,
 					},
 					{
 						topic: 'wetter/raining',
-						label: 'Regnet es?',
 						suffix: '',
 						decimals: 0,
-						sortOrder: 60,
-						maxAgeSeconds: 600,
+						sortOrder: 60,            // sortOrder 60 has to contain the boolean if its just raining
+						maxAgeSeconds: 18000,
 						conversions: [
 							{ from: "true", to: "ja" },
 							{ from: "false", to: "nein" }
@@ -106,11 +101,10 @@ Here is an example configuration with description. Put it in the `MagicMirror/co
 					},
 					{
 						topic: 'wetter/rain-today',
-						label: 'Regenmenge heute',
 						suffix: '',
-						decimals: 0,
-						sortOrder: 70,
-						maxAgeSeconds: 600,
+						decimals: 1,
+						sortOrder: 70,            // sortOrder 70 has to contain the amount of rain today
+						maxAgeSeconds: 18000,
 					},
 				]
 			}
