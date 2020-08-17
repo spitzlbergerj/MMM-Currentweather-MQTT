@@ -124,22 +124,22 @@ Here is an example configuration with description. Put it in the `MagicMirror/co
         <thead>
         <tbody>
             <tr>
-                <td><code>mqttServerAddress</code></td>
+                <td><code>address</code></td>
                 <td>IP address of the MQTT Broker
                 </td>
             </tr>
             <tr>
-                <td><code>mqttServerUser</code></td>
+                <td><code>port</code></td>
                 <td>Port of MQTT Broker
                 </td>
             </tr>
             <tr>
-                <td><code>mqttServerUser</code></td>
+                <td><code>user</code></td>
                 <td>User to access the MQTT Broker (optional)
                 </td>
             </tr>
             <tr>
-                <td><code>mqttServerPassword</code></td>
+                <td><code>password</code></td>
                 <td>Password of user to access the MQTT Broker (optional)
                 </td>
             </tr>
