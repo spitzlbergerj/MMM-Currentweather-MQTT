@@ -143,9 +143,5 @@ Here is an example configuration with description. Put it in the `MagicMirror/co
                 <td>Password of user to access the MQTT Broker (optional)
                 </td>
             </tr>
-            <tr>
-                <td><code>mqttTopics</code></td>
-                <td>Topics for the MQTT Broker (optional)
-            </tr>
         </tbody>
 </table>
