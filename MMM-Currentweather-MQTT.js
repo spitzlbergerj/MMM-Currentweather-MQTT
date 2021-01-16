@@ -34,6 +34,8 @@ Module.register("MMM-Currentweather-MQTT",{
 		showIndoorHumidity: false,
 		showFeelsLike: false,
 		showRainfall: false,
+		showTempMax: false,
+		showTempMin: false,
 
 		initialLoadDelay: 0, // 0 seconds delay
 		retryDelay: 2500,
@@ -81,6 +83,8 @@ Module.register("MMM-Currentweather-MQTT",{
 	indexWindDir: 4,
 	indexRaining: 5,
 	indexRainfall: 6,
+	indexTempMax: 7,
+	indexTempMin: 8,
 
 	// woher stammen die Werte OpenWeather oder MQTT
 	sourceHum: "OW",
@@ -89,6 +93,8 @@ Module.register("MMM-Currentweather-MQTT",{
 	sourceWindDir: "OW",
 	sourceRaining: "OW",
 	sourceRainfall: "OW",
+	sourceTempMax: "MQTT",
+	sourceTempMin: "MQTT",
 
 
 
@@ -412,6 +418,38 @@ Module.register("MMM-Currentweather-MQTT",{
 			wrapper.appendChild(small);
 		}
 
+		if (this.config.showTempMax || this.config.showTempMin){
+			var minmax = document.createElement("div");
+			minmax.className = "normal medium";
+
+			if (this.config.showTempMin) {
+				var tempMin = document.createElement("span");
+				tempMin.className = "normal medium";
+				tempMin.innerHTML = "Min.: " + this.tempMinToday + " °C";
+	
+				var spacer = document.createElement("sup");
+				spacer.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+	
+				minmax.appendChild(tempMin);
+				minmax.appendChild(spacer);
+			}
+	
+
+			if (this.config.showTempMax) {
+				var tempMax = document.createElement("span");
+				tempMax.className = "normal medium";
+				tempMax.innerHTML = "Max.: " + this.tempMaxToday + " °C";
+	
+				var spacer = document.createElement("sup");
+				spacer.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;";
+	
+				minmax.appendChild(tempMax);
+				minmax.appendChild(spacer);
+			}
+	
+			wrapper.appendChild(minmax);
+		}
+
 		return wrapper;
 	},
 
@@ -679,6 +717,20 @@ Module.register("MMM-Currentweather-MQTT",{
 		} else {
 			this.sourceRaining = "MQTT";
 			this.raining = sub[this.indexRaining].value;
+		}
+
+		if (sub[this.indexTempMax].value == "" ) {
+			this.tempMaxToday = 59;
+		} else {
+			this.sourceTempMax = "MQTT";
+			this.tempMaxToday = sub[this.indexTempMax].value;
+		}
+
+		if (sub[this.indexTempMin].value == "" ) {
+			this.tempMinToday = -59;
+		} else {
+			this.sourceTempMin = "MQTT";
+			this.tempMinToday = sub[this.indexTempMin].value;
 		}
 
 		this.weatherType = this.config.iconTable[data.weather[0].icon];
