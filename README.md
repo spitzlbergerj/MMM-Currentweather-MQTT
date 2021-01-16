@@ -13,6 +13,7 @@ For configuration options, please check the [MagicMirror² documentation](https:
 ![Screenshot](weather_screenshot.png)
 
 with minimum and maximum temperature as supplied via MQTT
+
 ![Screenshot](MMM-Currentweather-MQTT-minmax.jpg)
 
 ## Installation
