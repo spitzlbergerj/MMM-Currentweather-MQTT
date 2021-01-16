@@ -12,6 +12,9 @@ For configuration options, please check the [MagicMirror² documentation](https:
 
 ![Screenshot](weather_screenshot.png)
 
+with minimum and maximum temperature as supplied via MQTT
+![Screenshot](MMM-Currentweather-MQTT-minmax.jpg)
+
 ## Installation
 
 Go to `MagicMirror/modules` and write
@@ -48,6 +51,8 @@ Here is an example configuration with description. Put it in the `MagicMirror/co
 		useKMPHwind: true,
 		logging: true,
 		useWildcards: false,
+		showTempMax: true,
+		showTempMin: true,
 		mqttServers: [
 			{
 				address: 'xxx.xxx.xxx.xxx',  // Server address or IP address
@@ -105,6 +110,22 @@ Here is an example configuration with description. Put it in the `MagicMirror/co
 						decimals: 1,
 						sortOrder: 70,            // sortOrder 70 has to contain the amount of rain today
 						maxAgeSeconds: 18000,
+					},
+					{
+						topic: 'wetter/max-temp',
+						label: 'Temperatur max',
+						suffix: '',
+						decimals: 0,
+						sortOrder: 80,
+						maxAgeSeconds: 180000,
+					},
+					{
+						topic: 'wetter/min-temp',
+						label: 'Temperatur min',
+						suffix: '',
+						decimals: 0,
+						sortOrder: 90,
+						maxAgeSeconds: 180000,
 					},
 				]
 			}
