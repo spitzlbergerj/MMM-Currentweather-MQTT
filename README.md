@@ -1,3 +1,9 @@
+----------------------------  ⚠️  ----------------------------  
+Dieses Projekt wird nicht mehr gepflegt und funktioniert   
+mit aktuellen Abhängigkeiten oder Systemen möglicherweise   
+nicht mehr. Es bleibt als Referenz online.  
+----------------------------  ⚠️  ----------------------------   
+
 # MMM-Currentweather-MQTT
 
 The MMM-Currentweather-MQTT is based an the standard module `currentweather` and the module [`MMM-MQTT`](https://github.com/ottopaulsen/MMM-MQTT).
